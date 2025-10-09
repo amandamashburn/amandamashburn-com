@@ -1,7 +1,7 @@
 # personal-website
 ---
 
-🚧 Repository under construction
+🚧 Repository under construction.
 
 ### License
 
