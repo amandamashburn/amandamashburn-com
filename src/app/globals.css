@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-ibm-plex-sans);
+  --font-serif: var(--font-ibm-plex-serif);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+body {
+  background: #ffffff;
+  color: #000000;
+}
