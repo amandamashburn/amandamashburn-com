@@ -1,5 +1,3 @@
-import { Twitter, Linkedin, Github } from "lucide-react";
-
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6">
@@ -9,35 +7,34 @@ export default function Home() {
       <p className="mt-6 font-mono text-base font-light sm:text-lg">
         Let&apos;s connect while I build (with help from Claude Code).
       </p>
-      <div className="mt-8 flex gap-4">
+      <p className="mt-8 font-mono text-base font-light">
         <a
           href="https://x.com/AmandaMashburn"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Follow on X"
-          className="flex h-12 w-12 items-center justify-center rounded-lg border border-black/10 transition-colors hover:bg-black/5"
+          className="underline hover:no-underline"
         >
-          <Twitter className="h-5 w-5" />
+          𝕏
         </a>
-        <a
-          href="https://www.linkedin.com/in/amandamashburn/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Connect on LinkedIn"
-          className="flex h-12 w-12 items-center justify-center rounded-lg border border-black/10 transition-colors hover:bg-black/5"
-        >
-          <Linkedin className="h-5 w-5" />
-        </a>
+        {" • "}
         <a
           href="https://github.com/amandamashburn"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="View GitHub profile"
-          className="flex h-12 w-12 items-center justify-center rounded-lg border border-black/10 transition-colors hover:bg-black/5"
+          className="underline hover:no-underline"
         >
-          <Github className="h-5 w-5" />
+          GitHub
         </a>
-      </div>
+        {" • "}
+        <a
+          href="https://www.linkedin.com/in/amandamashburn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:no-underline"
+        >
+          LinkedIn
+        </a>
+      </p>
     </main>
   );
 }
