@@ -28,4 +28,4 @@ Uses `next/font/google` for IBM Plex family. Font CSS variables:
 ## Licensing
 
 - Source code: MIT License
-- Written content, images, and other media: All rights reserved (© 2025 Amanda Mashburn)
+- Written content, images, and other media: All rights reserved (© 2026 Amanda Mashburn)
