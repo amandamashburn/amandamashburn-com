@@ -27,7 +27,7 @@ export default function Home() {
         </a>
       </p>
       <p className="mt-6 text-center font-mono text-sm font-light sm:mt-8 sm:text-lg">
-        Watch the docs grow in real-time on{" "}
+        Watch me build in public on{" "}
         <a
           href="https://github.com/amandamashburn"
           target="_blank"
