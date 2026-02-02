@@ -26,7 +26,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "Amanda Mashburn",
-  description: "Personal website coming soon",
+  description:
+    "Systems thinker, technical non-engineer, and Southerner. Personal website of Amanda Mashburn.",
 };
 
 export default function RootLayout({
