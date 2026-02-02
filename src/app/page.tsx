@@ -15,7 +15,7 @@ export default function Home() {
 
         <article className="mt-10 space-y-5 font-serif text-base font-normal leading-[1.75] sm:mt-12 sm:space-y-6">
           <p>
-            Some folks fear a blank slate. I love them — they represent endless
+            Some folks fear a blank slate. I relish them — they represent endless
             possibility, a chance to create something from nothing. That theme
             runs through everything I do, whether it&apos;s standing up a
             program in corporate America or creating a home that&apos;s both
@@ -76,9 +76,9 @@ export default function Home() {
           </a>
           <p>
             The system is not a prescription. It&apos;s an opinionated starting
-            point and source of inspiration to see what is possible — something concrete to react to, adapt, and make your own.
+            point and source of inspiration — something concrete to react to, adapt, and make your own.
             The methodology itself is tool-agnostic, but I&apos;m sharing
-            implementations for Notion and Obsidian along with working examples, templates, and ways to leverage AI for each given use case — coupling theory with practice.
+            implementations for <a href="https://www.notion.com" className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">Notion</a> and <a href="https://obsidian.md" className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">Obsidian</a> along with working examples, templates, and ways to apply AI — coupling theory with practice.
           </p>
           <p>
             When I&apos;m not writing or tinkering with AI, you can find me exploring Appalachia or Northwest Florida — the places I go to spend time in nature and ponder.
@@ -116,10 +116,15 @@ export default function Home() {
               href="mailto:amandamashburn@proton.me"
               className="font-mono text-xs font-light tracking-[0.15em] text-foreground underline hover:no-underline sm:text-sm"
             >
-              Email me
+              Email
             </a>
           </nav>
         </footer>
+        <hr className="mt-10 border-dotted border-foreground/15 sm:mt-12" />
+        <p className="mt-4 text-center font-mono text-sm font-light text-muted-foreground">
+          Last update: Monday, February 2, 2026
+        </p>
+        <hr className="mt-4 border-dotted border-foreground/15" />
       </div>
     </main>
   );
