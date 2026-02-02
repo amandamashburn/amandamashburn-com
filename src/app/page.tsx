@@ -38,7 +38,16 @@ export default function Home() {
             planning, and then executing with focus. I'm interested in living with intention.
           </p>
           <p>
-            These experiences led me to build an extended mind system — one that
+            These experiences led me to build an{" "}
+            <a
+              href="https://grokipedia.com/page/Extended_mind_thesis"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:no-underline"
+            >
+              extended mind system
+            </a>{" "}
+             — one that
             helps me <strong>think, remember, maintain, prioritize, and do</strong>. I hesitate to call it a &ldquo;productivity system&rdquo; because that
             description makes me recoil a bit. It goes deeper than productivity.
             Used well, it becomes a tool for introspection, lifelong learning,
