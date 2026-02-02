@@ -38,6 +38,18 @@ export default function Home() {
         </a>
         .
       </p>
+      <p className="mt-6 text-center font-mono text-sm font-light sm:mt-8 sm:text-lg">
+        Read about{" "}
+        <a
+          href="https://docs.amandamashburn.com/pages/article_infrastructure"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:no-underline"
+        >
+          building my online home
+        </a>
+        .
+      </p>
 </main>
   );
 }
