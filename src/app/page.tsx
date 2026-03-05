@@ -105,14 +105,6 @@ export default function Home() {
               GitHub
             </a>
             <a
-              href="https://www.linkedin.com/in/amandamashburn/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-mono text-xs font-light tracking-[0.15em] text-foreground underline hover:no-underline sm:text-sm"
-            >
-              LinkedIn
-            </a>
-            <a
               href="mailto:amandamashburn@proton.me"
               className="font-mono text-xs font-light tracking-[0.15em] text-foreground underline hover:no-underline sm:text-sm"
             >
