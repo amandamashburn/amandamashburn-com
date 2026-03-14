@@ -15,56 +15,16 @@ export default function Home() {
 
         <article className="mt-10 space-y-5 font-serif text-base font-normal leading-[1.75] sm:mt-12 sm:space-y-6">
           <p>
-            Some folks fear a blank slate. I relish them — they represent endless
-            possibility, a chance to create something from nothing. That theme
-            runs through everything I do, whether it&apos;s standing up a
-            program in corporate America or creating a home that&apos;s both
-            functional and beautiful.
+            My background in a nutshell:
           </p>
           <p>
-            I&apos;ve spent over a decade in tech building systems where none
-            existed — knowledge management programs, business processes,
-            applications. I identify what&apos;s missing, define the requirements, build the foundation, and get it to a steady state to hand off for long-term maintenance.
-            Then it&apos;s on to the next thing. The same instinct shows up at
-            home — efficient work zones, life maintenance routines, spaces designed to
-            stand the test of time. Digital or physical, work or personal,
-            it&apos;s all the same principle. <strong>Establish order and efficiency, make it sustainable, repeat.</strong>
+            I&apos;ve spent over a decade in tech building efficient end-to-end systems from the ground up in the form of knowledge management programs, business processes, and AI applications. I identify the root problem to solve, define requirements, pinpoint people and sub-systems needed, architect the solution, coordinate (or execute) implementation, and thoroughly document it all.
           </p>
           <p>
-            But underneath all that building is a simpler question: in a world
-            of infinite options, how do we choose well? How do we allocate and
-            make the most of our finite resources — time, attention, energy,
-            money? I&apos;m interested in the discipline of thinking, deciding,
-            planning, and then executing with focus. I'm interested in living with intention.
+            Design. Build. Document. Hand off. Move on.
           </p>
           <p>
-            These experiences led me to build an{" "}
-            <a
-              href="https://grokipedia.com/page/Extended_mind_thesis"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:no-underline"
-            >
-              extended mind system
-            </a>{" "}
-             — one that
-            helps me <strong>think, remember, maintain, prioritize, and do</strong>. I hesitate to call it a &ldquo;productivity system&rdquo; because that
-            description makes me recoil a bit. It goes deeper than productivity.
-            Used well, it becomes a tool for introspection, lifelong learning,
-            and living a good life (however you choose to define it).
-          </p>
-          <p>
-            I am now in the process of documenting my extended mind system to share with the world. The project is in its infancy —{" "}
-            <a
-              href="https://docs.amandamashburn.com/pages/article_infrastructure"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:no-underline"
-            >
-              the infrastructure is in place
-            </a>
-            , and now I&apos;m cleaning up 50,000 words of drafts and
-            sharing them here:
+            In keeping with that theme, I am currently documenting my personal extended mind system to share with the world – alongside a collection of evergreen articles on topics that pique my interest. The project is a work in progress, but I'm sharing as I build:
           </p>
           <a
             href="https://docs.amandamashburn.com"
@@ -75,13 +35,7 @@ export default function Home() {
             docs.amandamashburn.com
           </a>
           <p>
-            The system is not a prescription. It&apos;s an opinionated starting
-            point and source of inspiration — something concrete to react to, adapt, and make your own.
-            The methodology itself is tool-agnostic, but I&apos;m sharing
-            implementations for <a href="https://www.notion.com" className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">Notion</a> and <a href="https://obsidian.md" className="underline hover:no-underline" target="_blank" rel="noopener noreferrer">Obsidian</a> along with working examples, templates, and ways to apply AI — coupling theory with practice.
-          </p>
-          <p>
-            When I&apos;m not writing or tinkering with AI, you can find me exploring Appalachia or Northwest Florida — the places I go to spend time in nature and ponder.
+            When I&apos;m not writing or tinkering with the latest tech, you can find me exploring Appalachia (Western NC) or Northwest Florida – my favorite places to spend time in nature and ponder.
           </p>
         </article>
 
@@ -114,7 +68,7 @@ export default function Home() {
         </footer>
         <hr className="mt-10 border-dotted border-foreground/15 sm:mt-12" />
         <p className="mt-4 text-center font-mono text-sm font-light text-muted-foreground">
-          Last update: Monday, February 2, 2026
+          Last update: March 14, 2026
         </p>
         <hr className="mt-4 border-dotted border-foreground/15" />
       </div>
