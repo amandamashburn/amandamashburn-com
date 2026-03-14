@@ -35,7 +35,7 @@ export default function Home() {
             docs.amandamashburn.com
           </a>
           <p>
-            When I&apos;m not writing or tinkering with the latest tech, you can find me exploring Appalachia (Western NC) or Northwest Florida – my favorite places to spend time in nature and ponder.
+            When I&apos;m not reading, writing, or tinkering with the latest tech, you can find me exploring Appalachia (Western NC) or Northwest Florida – my favorite places to spend time in nature and ponder.
           </p>
         </article>
 
