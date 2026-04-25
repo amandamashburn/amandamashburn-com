@@ -352,17 +352,16 @@ export default function CalendarPage() {
       <div className="w-full max-w-[1400px] mx-auto">
         {/* Header — static, always visible */}
         <header className="mb-8">
-          <div className="flex items-baseline justify-between">
-            <h1 className="font-serif text-xl font-normal uppercase tracking-[0.3em] sm:text-2xl">
-              ISO 8601 Calendar
-            </h1>
-            <Link
-              href="/"
-              className="font-mono text-xs font-light tracking-[0.15em] text-muted-foreground underline hover:no-underline"
-            >
+          <nav className="mb-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            <Link href="/" className="hover:text-foreground transition-colors">
               amandamashburn.com
             </Link>
-          </div>
+            <span>/</span>
+            <span className="text-foreground">ISO 8601 Calendar</span>
+          </nav>
+          <h1 className="font-serif text-xl font-normal uppercase tracking-[0.3em] sm:text-2xl">
+            ISO 8601 Calendar
+          </h1>
         </header>
 
         {/* Two-column dashboard — rendered only after client mount */}
