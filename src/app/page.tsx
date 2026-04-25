@@ -18,7 +18,7 @@ export default function Home() {
             My background in a nutshell:
           </p>
           <p>
-            I&apos;ve spent over a decade in tech building efficient end-to-end systems from the ground up – knowledge management programs, business processes, and (most recently) AI applications. I identify the root problem to solve, define requirements, architect the solution, coordinate (or execute) implementation, and document it all so it's maintainable.
+            I&apos;ve spent over a decade in enterprise tech building efficient end-to-end systems from the ground up – knowledge management programs, business processes, and AI applications. I identify the root problem to solve, define requirements, architect the solution, coordinate (or execute) implementation, and document it all so it's maintainable.
           </p>
           <p>
             My rhythm: Design → Build → Document
@@ -28,12 +28,12 @@ export default function Home() {
 It all lives on my public knowledge base – a perpetual work in progress. Articles are published incrementally as they're written.
           </p>
           <a
-            href="https://docs.amandamashburn.com"
+            href="https://docs.amandamashburn.com/pages/index-extended-mind-system"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light tracking-[0.05em] text-black transition-colors hover:border-black/30 sm:text-sm"
           >
-            docs.amandamashburn.com
+            An Extended Mind System
           </a>
           <p>
             When I&apos;m not reading, writing, or tinkering with the latest tech, you can find me exploring Appalachia (Western NC) or Northwest Florida – my favorite places to spend time in nature and ponder.
@@ -91,7 +91,7 @@ It all lives on my public knowledge base – a perpetual work in progress. Artic
         </footer>
         <section className="mt-10 sm:mt-12">
           <p className="font-serif text-base italic text-foreground">Get in touch.</p>
-          <p className="mt-5 font-mono text-xs font-light tracking-[0.15em] text-foreground sm:text-sm">
+          <p className="mt-5 font-mono text-xs font-light tracking-[0.05em] text-foreground sm:text-sm">
             amandamashburn@proton.me
           </p>
         </section>
