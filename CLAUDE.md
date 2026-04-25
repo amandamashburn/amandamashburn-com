@@ -25,13 +25,14 @@ npm run lint     # Run ESLint
 personal-website/
 ├── src/
 │   ├── app/                    # Next.js App Router
+│   │   ├── calendar/
+│   │   │   └── page.tsx        # ISO week-based year dashboard
 │   │   ├── layout.tsx          # Root layout, font loading, metadata
 │   │   ├── page.tsx            # Landing page
 │   │   ├── globals.css         # Tailwind config, design tokens, themes
 │   │   └── favicon.ico
-│   ├── components/             # React components (empty, ready for use)
-│   │   └── ui/                 # shadcn/ui components go here
 │   └── lib/
+│       ├── calendar.ts         # Calendar/week utilities
 │       └── utils.ts            # cn() helper for className merging
 ├── public/                     # Static assets
 ├── components.json             # shadcn/ui configuration
@@ -142,6 +143,71 @@ Create files in `src/app/api/`:
 ### Adding Components
 1. For shadcn/ui: `npx shadcn@latest add [component]`
 2. For custom: Create in `src/components/`
+
+## Working Notes
+
+### Pages at a Glance
+
+| Route | File | Type | Purpose |
+|-------|------|------|---------|
+| `/` | `src/app/page.tsx` | Server Component | Homepage / landing |
+| `/calendar` | `src/app/calendar/page.tsx` | Client Component (`"use client"`) | ISO 8601 Calendar dashboard |
+
+### Site Content Reference
+
+**Homepage (`/`):**
+- Tagline: "Systems Thinker. Technical Non-Engineer. Generalist."
+- Bio: decade in tech, systems-building, documentation-first approach
+- External links: `docs.amandamashburn.com`, X (`x.com/amandamashburn`), GitHub (`github.com/amandamashburn`)
+- Contact: `amandamashburn@proton.me`
+- Last updated footer: "Last updated March 14, 2026"
+
+**Calendar (`/calendar`):**
+- Title: "ISO 8601 Calendar"
+- Displays all ISO 8601 weeks for a selected year (current or next)
+- Sidebar: day-of-year, ISO week number, year progress %, days/weeks remaining
+- Donut chart SVG showing year progress
+- No event data — purely visual progress tracker
+
+### Design Patterns to Maintain
+
+- **External links:** always `target="_blank" rel="noopener noreferrer"`
+- **Buttons/tags:** `rounded-full border border-black bg-white text-black hover:bg-black hover:text-white` pattern
+- **Typography:** serif (`font-serif`) for headlines, mono (`font-mono`) for metadata/numbers, sans (`font-sans`) for body
+- **Layout:** centered single-column, `max-w-[640px] mx-auto`, horizontal padding `px-6`
+- **Vertical spacing:** responsive `py-16 sm:py-24 md:py-32` on page sections
+- **Section dividers:** `<hr className="border-dotted border-neutral-300" />`
+- **Color palette:** intentionally neutral/grayscale — avoid introducing brand colors
+
+### Client-Side Hydration Pattern
+
+The calendar page defers all date initialization to avoid SSR/client hydration mismatches:
+
+```tsx
+const [now, setNow] = useState<Date | null>(null)
+useEffect(() => { setNow(new Date()) }, [])
+if (!now) return <p>Loading…</p>
+```
+
+Any feature that depends on `new Date()` or browser APIs must follow this same pattern.
+
+### Custom Date Library (`src/lib/calendar.ts`)
+
+- All ISO 8601 math is custom — no external date library (no dayjs, date-fns)
+- UTC internally for day arithmetic; local date semantics for display
+- Self-validating: assertions run at module import and `console.warn` on failure
+- **Extend this file** for new date/week utilities — do not add a date library dependency
+
+### Deployment & Analytics
+
+- Deployed on Vercel; `@vercel/analytics` is wired in `layout.tsx` and works automatically
+- `npm run build` runs TypeScript type checking — fix type errors before deploying
+
+### Installed but Currently Unused Packages
+
+- `lucide-react` — icon library, not yet imported anywhere; use this for any icons needed
+- `class-variance-authority` — available for component variant patterns (shadcn pattern)
+- `cn()` (`src/lib/utils.ts`) — class merging utility, not yet called in current pages but available
 
 ## Licensing
 

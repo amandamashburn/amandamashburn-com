@@ -77,35 +77,55 @@ function DonutChart({ pct }: { pct: number }) {
   );
 }
 
-// ─── ISO Info Panel ────────────────────────────────────────────────────────
+// ─── Info Panel ────────────────────────────────────────────────────────────
 
-function ISOInfoPanel() {
+function InfoPanel() {
   return (
-    <div className="mt-6 border border-foreground/15 rounded px-4 py-4">
-      <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground mb-4">
-        About This Calendar
-      </p>
-      <div className="space-y-3 font-serif text-sm leading-relaxed text-foreground/80">
-        <p>
-          ISO 8601 is an international standard for representing dates and
-          times. Its week-based calendar divides the year into 52 or 53 weeks,
-          each starting on Monday.
-        </p>
-        <p>
-          The ISO week year doesn&apos;t always start on January 1. Week 1 is
-          defined as the week containing the first Thursday of the year —
-          equivalently, the week containing January 4th. This means a few early
-          January dates may belong to the prior ISO year, and a few late
-          December dates may belong to the next.
-        </p>
-        <p>
-          Because every year contains exactly 52 or 53 complete weeks, this
-          calendar is well-suited for planning in 4-week and 12-week cycles. The
-          groupings visible here divide the year into 13 periods of 4 weeks each
-          (with a possible remainder), making it straightforward to structure
-          sprints, reviews, and quarterly rhythms.
-        </p>
-      </div>
+    <div className="mt-6 border border-foreground/15 rounded divide-y divide-foreground/10">
+      <details className="group px-4 py-3">
+        <summary className="flex cursor-pointer list-none items-center justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          About This Calendar
+          <span className="group-open:hidden">+</span>
+          <span className="hidden group-open:inline">−</span>
+        </summary>
+        <div className="mt-3 space-y-3 font-serif text-sm leading-relaxed text-foreground/80">
+          <p>
+            ISO 8601 is an international standard for representing dates and
+            times.
+          </p>
+          <p>
+            The ISO week year doesn&apos;t always begin on January 01. Week 01
+            is defined as the week containing the first Thursday of the year –
+            equivalently, the week containing January 4th. This means a few
+            early January dates may belong to the prior ISO year, and a few
+            late December dates may belong to the next.
+          </p>
+          <p>
+            The groupings on this page divide the year into 13 periods of 4
+            weeks each (with a possible remainder), making it a useful tool
+            to structure sprints and reviews.
+          </p>
+          <p>
+            Dates are displayed in MM-DD format.
+          </p>
+        </div>
+      </details>
+
+      <details className="group px-4 py-3">
+        <summary className="flex cursor-pointer list-none items-center justify-between font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          Tips
+          <span className="group-open:hidden">+</span>
+          <span className="hidden group-open:inline">−</span>
+        </summary>
+        <div className="mt-3 space-y-3 font-serif text-sm leading-relaxed text-foreground/80">
+          <p>
+            → For the best experience, view on a desktop.
+          </p>
+          <p>
+            → This calendar makes a great browser homepage.
+          </p>
+        </div>
+      </details>
     </div>
   );
 }
@@ -147,8 +167,8 @@ function StatsPanel({ now }: { now: Date }) {
         </p>
       </div>
 
-      {/* ISO 8601 info */}
-      <ISOInfoPanel />
+      {/* Info + tips */}
+      <InfoPanel />
     </aside>
   );
 }
@@ -334,16 +354,15 @@ export default function CalendarPage() {
         <header className="mb-8">
           <div className="flex items-baseline justify-between">
             <h1 className="font-serif text-xl font-normal uppercase tracking-[0.3em] sm:text-2xl">
-              Year at a glance
+              ISO 8601 Calendar
             </h1>
             <Link
               href="/"
               className="font-mono text-xs font-light tracking-[0.15em] text-muted-foreground underline hover:no-underline"
             >
-              ← Home
+              amandamashburn.com
             </Link>
           </div>
-          <hr className="mt-4 border-dotted border-foreground/15" />
         </header>
 
         {/* Two-column dashboard — rendered only after client mount */}

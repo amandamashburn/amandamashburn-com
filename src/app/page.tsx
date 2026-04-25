@@ -8,7 +8,7 @@ export default function Home() {
           </h1>
           <hr className="my-4 border-dotted border-foreground/15" />
           <p className="font-mono text-xs font-light uppercase tracking-[0.20em] text-foreground sm:text-sm">
-            Systems Thinker • Technical Non-Engineer • Southerner
+            Systems Thinker • Generalist • Technical Non-Engineer
           </p>
           <hr className="my-4 border-dotted border-foreground/15" />
         </header>
@@ -18,19 +18,20 @@ export default function Home() {
             My background in a nutshell:
           </p>
           <p>
-            I&apos;ve spent over a decade in tech building efficient end-to-end systems from the ground up in the form of knowledge management programs, business processes, and AI applications. I identify the root problem to solve, define requirements, pinpoint people and sub-systems needed, architect the solution, coordinate (or execute) implementation, and thoroughly document it all.
+            I&apos;ve spent over a decade in tech building efficient end-to-end systems from the ground up – knowledge management programs, business processes, and (most recently) AI applications. I identify the root problem to solve, define requirements, architect the solution, coordinate (or execute) implementation, and document it all so it's maintainable.
           </p>
           <p>
-            Design. Build. Document. Hand off. Move on.
+            My rhythm: Design → Build → Document
           </p>
           <p>
-            In keeping with that theme, I am currently documenting my personal extended mind system to share with the world – alongside a collection of evergreen articles on topics that pique my interest. The project is a work in progress, but I'm sharing as I build:
+            In keeping with that theme, I am currently documenting my personal extended mind system (built with Notion) alongside evergreen articles on various topics.
+It all lives on my public knowledge base – a perpetual work in progress, with articles released incrementally as they're written.
           </p>
           <a
             href="https://docs.amandamashburn.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="block underline hover:no-underline"
+            className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light tracking-[0.05em] text-black transition-colors hover:border-black/30 sm:text-sm"
           >
             docs.amandamashburn.com
           </a>
@@ -39,14 +40,34 @@ export default function Home() {
           </p>
         </article>
 
+        <section className="mt-10 sm:mt-12">
+          <p className="font-serif text-base italic text-foreground">Tools.</p>
+          <nav className="mt-5 flex flex-col items-start gap-3">
+            <a
+              href="/calendar"
+              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-black transition-colors hover:border-black/30 sm:text-sm"
+            >
+              ISO 8601 Calendar
+            </a>
+            <a
+              href="https://docs.amandamashburn.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-black transition-colors hover:border-black/30 sm:text-sm"
+            >
+              Public Knowledge Base
+            </a>
+          </nav>
+        </section>
+
         <footer className="mt-10 sm:mt-12">
-          <p className="font-serif text-base italic text-foreground">Let&apos;s connect.</p>
-          <nav className="mt-5 flex flex-col gap-5">
+          <p className="font-serif text-base italic text-foreground">Follow me.</p>
+          <nav className="mt-5 flex flex-col items-start gap-3">
             <a
               href="https://x.com/AmandaMashburn"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-xs font-light tracking-[0.15em] text-foreground underline hover:no-underline sm:text-sm"
+              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.05em] text-black transition-colors hover:border-black/30 sm:text-sm"
             >
               X
             </a>
@@ -54,21 +75,22 @@ export default function Home() {
               href="https://github.com/amandamashburn"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-xs font-light tracking-[0.15em] text-foreground underline hover:no-underline sm:text-sm"
+              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.05em] text-black transition-colors hover:border-black/30 sm:text-sm"
             >
               GitHub
             </a>
-            <a
-              href="mailto:amandamashburn@proton.me"
-              className="font-mono text-xs font-light tracking-[0.15em] text-foreground underline hover:no-underline sm:text-sm"
-            >
-              Email
-            </a>
           </nav>
         </footer>
+        <section className="mt-10 sm:mt-12">
+          <p className="font-serif text-base italic text-foreground">Get in touch.</p>
+          <p className="mt-5 font-mono text-xs font-light tracking-[0.15em] text-foreground sm:text-sm">
+            amandamashburn@proton.me
+          </p>
+        </section>
+
         <hr className="mt-10 border-dotted border-foreground/15 sm:mt-12" />
         <p className="mt-4 text-center font-mono text-sm font-light text-muted-foreground">
-          Last update: March 14, 2026
+          Last update: April 25, 2026
         </p>
         <hr className="mt-4 border-dotted border-foreground/15" />
       </div>
