@@ -25,7 +25,7 @@ export default function Home() {
           </p>
           <p>
             In keeping with that theme, I am currently documenting my personal extended mind system (built with Notion) alongside evergreen articles on various topics.
-It all lives on my public knowledge base – a perpetual work in progress, with articles released incrementally as they're written.
+It all lives on my public knowledge base – a perpetual work in progress. Articles are published incrementally as they're written.
           </p>
           <a
             href="https://docs.amandamashburn.com"
