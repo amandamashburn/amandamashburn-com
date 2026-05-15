@@ -31,7 +31,7 @@ It all lives on my public knowledge base – a perpetual work in progress. Artic
             href="https://docs.amandamashburn.com/pages/index-extended-mind-system"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light tracking-[0.05em] text-black transition-colors hover:border-black/30 sm:text-sm"
+            className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light tracking-[0.05em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
           >
             An Extended Mind System
           </a>
@@ -47,13 +47,13 @@ It all lives on my public knowledge base – a perpetual work in progress. Artic
               href="https://amandamashburn.notion.site/extended-mind-system"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-black transition-colors hover:border-black/30 sm:text-sm"
+              className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
             >
               Notion Templates
             </a>
             <a
               href="/calendar"
-              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-black transition-colors hover:border-black/30 sm:text-sm"
+              className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
             >
               ISO 8601 Calendar
             </a>
@@ -61,7 +61,7 @@ It all lives on my public knowledge base – a perpetual work in progress. Artic
               href="https://docs.amandamashburn.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-black transition-colors hover:border-black/30 sm:text-sm"
+              className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
             >
               Public Knowledge Base
             </a>
@@ -75,7 +75,7 @@ It all lives on my public knowledge base – a perpetual work in progress. Artic
               href="https://x.com/AmandaMashburn"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.05em] text-black transition-colors hover:border-black/30 sm:text-sm"
+              className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.05em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
             >
               X
             </a>
@@ -83,9 +83,17 @@ It all lives on my public knowledge base – a perpetual work in progress. Artic
               href="https://github.com/amandamashburn"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block rounded border border-black/10 bg-white px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.05em] text-black transition-colors hover:border-black/30 sm:text-sm"
+              className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.05em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
             >
               GitHub
+            </a>
+            <a
+              href="https://www.instagram.com/amandamashburn_"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.05em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
+            >
+              Instagram
             </a>
           </nav>
         </footer>
@@ -98,7 +106,7 @@ It all lives on my public knowledge base – a perpetual work in progress. Artic
 
         <hr className="mt-10 border-dotted border-foreground/15 sm:mt-12" />
         <p className="mt-4 text-center font-mono text-sm font-light text-muted-foreground">
-          Last update: April 25, 2026
+          Last update: May 14, 2026
         </p>
         <hr className="mt-4 border-dotted border-foreground/15" />
       </div>
