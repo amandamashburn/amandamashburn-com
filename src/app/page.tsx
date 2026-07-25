@@ -8,7 +8,7 @@ export default function Home() {
           </h1>
           <hr className="my-4 border-dotted border-foreground/15" />
           <p className="font-mono text-xs font-light uppercase tracking-[0.20em] text-foreground sm:text-sm">
-            Systems Thinker • Generalist • Technical Non-Engineer
+            Systems Thinker • Generalist
           </p>
           <hr className="my-4 border-dotted border-foreground/15" />
         </header>
@@ -18,39 +18,30 @@ export default function Home() {
             My background in a nutshell:
           </p>
           <p>
-            I&apos;ve spent over a decade in enterprise tech building efficient end-to-end systems from the ground up – knowledge management programs, business processes, and AI applications. I identify the root problem to solve, define requirements, architect the solution, coordinate (or execute) implementation, and document it all so it's maintainable.
+            I&apos;ve spent over a decade in enterprise tech building efficient end-to-end systems from the ground up – knowledge management programs, global business processes, and AI applications. I identify the root problem to solve, define requirements, architect the solution, coordinate (or execute) implementation, and document it all so it's maintainable.
           </p>
           <p>
             My rhythm: Design → Build → Document
           </p>
           <p>
-            In keeping with that theme, I am currently documenting my personal extended mind system (built with Notion) alongside evergreen articles on various topics.
-It all lives on my public knowledge base – a perpetual work in progress. Articles are published incrementally as they're written.
+            In keeping with that theme, I am documenting my personal Life Management System (built with Notion). Follow my progress on Instagram:
           </p>
           <a
-            href="https://docs.amandamashburn.com/pages/index-extended-mind-system"
+            href="https://www.instagram.com/amandamashburn_"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light tracking-[0.05em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
           >
-            An Extended Mind System
+            @amandamashburn_
           </a>
           <p>
-            When I&apos;m not reading, writing, or tinkering with the latest tech, you can find me exploring Appalachia (Western NC) or Northwest Florida – my favorite places to spend time in nature and ponder.
+            When I&apos;m not reading, writing, or tinkering with tech, you can find me exploring Appalachia (Western NC) or Northwest Florida – my favorite places to spend time in nature and ponder.
           </p>
         </article>
 
         <section className="mt-10 sm:mt-12">
           <p className="font-serif text-base italic text-foreground">Tools.</p>
           <nav className="mt-5 flex flex-col items-start gap-3">
-            <a
-              href="https://amandamashburn.notion.site/extended-mind-system"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
-            >
-              Notion Templates
-            </a>
             <a
               href="/calendar"
               className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
@@ -106,7 +97,7 @@ It all lives on my public knowledge base – a perpetual work in progress. Artic
 
         <hr className="mt-10 border-dotted border-foreground/15 sm:mt-12" />
         <p className="mt-4 text-center font-mono text-sm font-light text-muted-foreground">
-          Last update: May 14, 2026
+          Last update: July 25, 2026
         </p>
         <hr className="mt-4 border-dotted border-foreground/15" />
       </div>
