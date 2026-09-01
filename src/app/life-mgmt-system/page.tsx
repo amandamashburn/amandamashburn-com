@@ -1,6 +1,7 @@
 import { Breadcrumb } from "@/components/breadcrumb";
 import { KnowledgeGraph } from "@/components/knowledge-graph";
-import { lifeMgmtSystemGraph, getNodesWithHref } from "@/lib/graph";
+import { lifeMgmtSystemGraph } from "@/data/life-mgmt-system";
+import { getNodeTypes } from "@/lib/graph";
 
 export const metadata = {
   title: "Life Management System | Amanda Mashburn",
@@ -9,13 +10,13 @@ export const metadata = {
 };
 
 function Legend() {
-  const types = ["tool", "routine", "setup", "system"];
+  const types = getNodeTypes(lifeMgmtSystemGraph);
 
   return (
     <div className="flex flex-wrap gap-4">
       {types.map((type) => (
         <div key={type} className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-foreground" />
+          <div className="h-2.5 w-2.5 rounded-full bg-foreground" />
           <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
             {type}
           </span>
@@ -25,56 +26,42 @@ function Legend() {
   );
 }
 
-function NodeIndex() {
-  const nodesWithHref = getNodesWithHref(lifeMgmtSystemGraph);
-
-  if (nodesWithHref.length === 0) return null;
-
+function Instructions() {
   return (
-    <section className="mt-10 sm:mt-12">
-      <h2 className="font-serif text-base italic text-foreground">
-        Explore nodes.
-      </h2>
-      <nav className="mt-5 flex flex-col items-start gap-3">
-        {nodesWithHref.map((node) => (
-          <a
-            key={node.id}
-            href={node.href}
-            className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
-          >
-            {node.label}
-          </a>
-        ))}
-      </nav>
-    </section>
+    <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] text-muted-foreground">
+      <span>Scroll to zoom</span>
+      <span>Drag to pan</span>
+      <span>Click chevron to expand/collapse</span>
+      <span>Hover for connections</span>
+    </div>
   );
 }
 
 export default function LifeMgmtSystemPage() {
   return (
     <main className="flex min-h-svh flex-col px-6 py-12 sm:py-16">
-      <div className="mx-auto w-full max-w-[1000px]">
-        <header className="mb-8">
-          <Breadcrumb
-            items={[{ label: "life-mgmt-system" }]}
-          />
+      <div className="mx-auto w-full max-w-[1400px]">
+        <header className="mb-6">
+          <Breadcrumb items={[{ label: "life-mgmt-system" }]} />
           <h1 className="mt-4 font-serif text-xl font-normal uppercase tracking-[0.3em] sm:text-2xl">
             {lifeMgmtSystemGraph.title}
           </h1>
-          <p className="mt-4 font-serif text-base leading-relaxed text-foreground/80">
+          <p className="mt-3 font-serif text-base leading-relaxed text-foreground/80 max-w-[640px]">
             A visual map of the tools, routines, setups, and systems that power
-            daily life. Click on any node with a detail page to learn more.
+            daily life. Expand nodes to explore the hierarchy.
           </p>
         </header>
 
-        <section className="rounded border border-foreground/15 p-4 sm:p-6">
-          <div className="mb-4">
-            <Legend />
-          </div>
-          <KnowledgeGraph graph={lifeMgmtSystemGraph} />
-        </section>
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Legend />
+          <Instructions />
+        </div>
 
-        <NodeIndex />
+        <KnowledgeGraph graph={lifeMgmtSystemGraph} />
+
+        <p className="mt-4 font-mono text-[10px] text-muted-foreground">
+          {lifeMgmtSystemGraph.nodes.length} nodes · {lifeMgmtSystemGraph.edges.length} edges
+        </p>
       </div>
     </main>
   );

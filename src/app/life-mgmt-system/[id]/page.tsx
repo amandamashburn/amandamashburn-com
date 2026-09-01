@@ -2,11 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Breadcrumb } from "@/components/breadcrumb";
+import { lifeMgmtSystemGraph } from "@/data/life-mgmt-system";
 import {
-  lifeMgmtSystemGraph,
   getNodeById,
   getNeighborIds,
   getConnectedEdges,
+  getNodesWithHref,
 } from "@/lib/graph";
 
 interface PageProps {
@@ -32,11 +33,11 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export async function generateStaticParams() {
-  return lifeMgmtSystemGraph.nodes
-    .filter((node) => node.href !== undefined)
-    .map((node) => ({
-      id: node.id,
-    }));
+  // Generate static params only for nodes with href
+  const nodesWithHref = getNodesWithHref(lifeMgmtSystemGraph);
+  return nodesWithHref.map((node) => ({
+    id: node.id,
+  }));
 }
 
 function RelatedNodes({ nodeId }: { nodeId: string }) {
@@ -112,6 +113,7 @@ export default async function NodeDetailPage({ params }: PageProps) {
   const { id } = await params;
   const node = getNodeById(lifeMgmtSystemGraph, id);
 
+  // Only render pages for nodes that have href defined
   if (!node || !node.href) {
     notFound();
   }
