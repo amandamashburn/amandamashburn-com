@@ -213,7 +213,12 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
-  const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, scale: 0.5 });
+  // Initialize camera to center on the graph bounds
+  const [camera, setCamera] = useState<Camera>(() => ({
+    x: 0,
+    y: 0,
+    scale: 0.15, // Start zoomed out to see more of the graph
+  }));
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
@@ -320,9 +325,13 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     const scaleY = rect.height / bounds.height;
     const newScale = Math.min(scaleX, scaleY, 1) * 0.9;
 
+    // Center the view on the graph bounds
+    const viewWidth = rect.width / newScale;
+    const viewHeight = rect.height / newScale;
+    
     setCamera({
-      x: bounds.minX + bounds.width / 2 - rect.width / 2 / newScale,
-      y: bounds.minY + bounds.height / 2 - rect.height / 2 / newScale,
+      x: bounds.minX + (bounds.width - viewWidth) / 2,
+      y: bounds.minY + (bounds.height - viewHeight) / 2,
       scale: Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale)),
     });
   }, [bounds]);
@@ -345,9 +354,12 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!isPanning) return;
-      const dx = (e.clientX - panStart.x) / camera.scale;
-      const dy = (e.clientY - panStart.y) / camera.scale;
+      if (!isPanning || !containerRef.current) return;
+      // Convert screen pixels to world coordinates
+      const rect = containerRef.current.getBoundingClientRect();
+      const viewWidth = rect.width / camera.scale;
+      const dx = ((e.clientX - panStart.x) / rect.width) * viewWidth;
+      const dy = ((e.clientY - panStart.y) / rect.height) * (rect.height / camera.scale);
       setCamera((prev) => ({
         ...prev,
         x: prev.x - dx,
@@ -385,6 +397,13 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     [graph, visibleNodeIds]
   );
 
+  // Calculate viewBox based on camera state
+  const containerWidth = containerRef.current?.clientWidth || 800;
+  const containerHeight = containerRef.current?.clientHeight || 600;
+  const viewWidth = containerWidth / camera.scale;
+  const viewHeight = containerHeight / camera.scale;
+  const viewBox = `${camera.x} ${camera.y} ${viewWidth} ${viewHeight}`;
+
   return (
     <div
       ref={containerRef}
@@ -398,10 +417,8 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     >
       <svg
         className="w-full h-full"
-        style={{
-          transform: `scale(${camera.scale}) translate(${-camera.x}px, ${-camera.y}px)`,
-          transformOrigin: "0 0",
-        }}
+        viewBox={viewBox}
+        preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label={`Knowledge graph: ${graph.title} with ${visibleNodes.length} visible nodes`}
       >
