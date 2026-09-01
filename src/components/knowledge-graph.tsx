@@ -37,6 +37,26 @@ interface Camera {
   scale: number;
 }
 
+function computeFocusCamera(
+  width: number,
+  height: number,
+  bounds: ReturnType<typeof getGraphBounds>,
+  graph: Graph,
+  scale = INITIAL_SCALE
+): Camera {
+  const focusNode = graph.nodes.find((n) => n.id === "notion");
+  const focusX = focusNode?.x ?? bounds.minX + bounds.width / 2;
+  const focusY = focusNode?.y ?? bounds.minY + bounds.height / 2;
+  const viewWidth = width / scale;
+  const viewHeight = height / scale;
+
+  return {
+    x: focusX - viewWidth / 2,
+    y: focusY - viewHeight / 2,
+    scale,
+  };
+}
+
 // Plain SVG chevron paths (no nested svg elements)
 function ChevronRightIcon({ x, y, size }: { x: number; y: number; size: number }) {
   return (
@@ -120,18 +140,56 @@ function GraphNodeElement({
   const hasHref = !!node.href;
 
   const handleNodeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-    if (hasHref) {
-      onNavigate();
-    }
+    onNavigate();
   };
 
   const handleNodeMouseDown = (e: React.MouseEvent) => {
-    // Prevent container pan from stealing clicks on navigable nodes
-    if (hasHref) {
-      e.stopPropagation();
-    }
+    e.stopPropagation();
   };
+
+  const labelOffset = hasChildren ? 16 : 14;
+  const hitX = node.x + labelOffset - 4;
+  const hitY = node.y - 18;
+  const hitWidth = Math.max(node.label.length * 8 + 24, 80);
+  const hitHeight = 36;
+
+  const nodeContent = (
+    <>
+      <circle
+        cx={node.x}
+        cy={node.y}
+        r={radius}
+        fill="currentColor"
+        pointerEvents="none"
+      />
+      <text
+        x={node.x + labelOffset}
+        y={node.y + 5}
+        fontSize={LABEL_FONT_SIZE}
+        fontFamily="var(--font-ibm-plex-sans), system-ui, sans-serif"
+        fontWeight={isHighlighted ? 500 : 400}
+        fill="currentColor"
+        textDecoration={hasHref ? "underline" : "none"}
+        pointerEvents="none"
+      >
+        {node.label}
+      </text>
+      <text
+        x={node.x + labelOffset}
+        y={node.y - 12}
+        fontSize={TYPE_FONT_SIZE}
+        fontFamily="var(--font-ibm-plex-mono), monospace"
+        fill="currentColor"
+        opacity={0.6}
+        style={{ textTransform: "uppercase", letterSpacing: "0.08em" }}
+        pointerEvents="none"
+      >
+        {node.type}
+      </text>
+    </>
+  );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -154,8 +212,6 @@ function GraphNodeElement({
       aria-expanded={hasChildren ? !isCollapsed : undefined}
       aria-label={`${node.label} (${node.type})${hasHref ? " - click to view details" : ""}${hasChildren ? (isCollapsed ? " - collapsed" : " - expanded") : ""}`}
       style={{ cursor: hasHref ? "pointer" : "default" }}
-      onClick={handleNodeClick}
-      onMouseDown={handleNodeMouseDown}
       onKeyDown={handleKeyDown}
     >
       {/* Click target for expand/collapse */}
@@ -181,7 +237,7 @@ function GraphNodeElement({
             height={chevronSize}
             fill="transparent"
           />
-          <g opacity={0.7}>
+          <g opacity={0.7} pointerEvents="none">
             {isCollapsed ? (
               <ChevronRightIcon x={node.x - chevronSize / 2} y={node.y - chevronSize / 2} size={chevronSize} />
             ) : (
@@ -191,39 +247,32 @@ function GraphNodeElement({
         </g>
       )}
 
-      {/* Node circle - larger and more prominent, underline-style for links */}
-      <circle
-        cx={node.x}
-        cy={node.y}
-        r={radius}
-        fill="currentColor"
-      />
-
-      {/* Node label - larger, readable, underlined if navigable */}
-      <text
-        x={node.x + (hasChildren ? 16 : 14)}
-        y={node.y + 5}
-        fontSize={LABEL_FONT_SIZE}
-        fontFamily="var(--font-ibm-plex-sans), system-ui, sans-serif"
-        fontWeight={isHighlighted ? 500 : 400}
-        fill="currentColor"
-        textDecoration={hasHref ? "underline" : "none"}
-      >
-        {node.label}
-      </text>
-
-      {/* Type label - smaller but still legible */}
-      <text
-        x={node.x + (hasChildren ? 16 : 14)}
-        y={node.y - 12}
-        fontSize={TYPE_FONT_SIZE}
-        fontFamily="var(--font-ibm-plex-mono), monospace"
-        fill="currentColor"
-        opacity={0.6}
-        style={{ textTransform: "uppercase", letterSpacing: "0.08em" }}
-      >
-        {node.type}
-      </text>
+      {hasHref ? (
+        <a
+          href={node.href}
+          onClick={handleNodeClick}
+          onMouseDown={handleNodeMouseDown}
+          aria-hidden="true"
+          tabIndex={-1}
+        >
+          <rect
+            x={hitX}
+            y={hitY}
+            width={hitWidth}
+            height={hitHeight}
+            fill="transparent"
+          />
+          <circle
+            cx={node.x}
+            cy={node.y}
+            r={radius + 6}
+            fill="transparent"
+          />
+          {nodeContent}
+        </a>
+      ) : (
+        nodeContent
+      )}
     </g>
   );
 }
@@ -297,13 +346,11 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   
   // Get graph bounds (memoized)
   const bounds = useMemo(() => getGraphBounds(graph), [graph]);
-  
-  // Initialize camera to show the full graph
-  const [camera, setCamera] = useState<Camera>(() => ({
-    x: bounds.minX,
-    y: bounds.minY,
-    scale: 0.06,
-  }));
+
+  // Initialize camera focused on Notion hub
+  const [camera, setCamera] = useState<Camera>(() =>
+    computeFocusCamera(1200, 700, bounds, graph)
+  );
   
   const [isPanning, setIsPanning] = useState(false);
   const [panPending, setPanPending] = useState(false);
@@ -513,17 +560,24 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     zoomAtPoint(camera.scale / ZOOM_FACTOR, rect.left + rect.width / 2, rect.top + rect.height / 2);
   }, [camera.scale, zoomAtPoint]);
 
-  // Track whether initial view has been set
+  // Track whether initial view has been set from real container size
   const initializedRef = useRef(false);
 
-  // Measure container on mount and resize
+  // Measure container on mount and resize; set initial camera from real dimensions
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const updateSize = () => {
       const rect = container.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
       setContainerSize({ width: rect.width, height: rect.height });
+
+      if (!initializedRef.current) {
+        initializedRef.current = true;
+        setCamera(computeFocusCamera(rect.width, rect.height, bounds, graph));
+      }
     };
 
     updateSize();
@@ -532,28 +586,22 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     resizeObserver.observe(container);
 
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [bounds, graph]);
 
-  // Set initial view once container is measured (don't auto-fit - show engaging zoom level)
+  // Non-passive wheel listener (avoids preventDefault warnings)
   useEffect(() => {
-    if (initializedRef.current) return;
-    if (containerSize.width === 0 || containerSize.height === 0) return;
-    
-    initializedRef.current = true;
-    
-    // Set an engaging initial zoom centered on the Notion hub (or graph center)
-    const focusNode = graph.nodes.find((n) => n.id === "notion");
-    const focusX = focusNode?.x ?? bounds.minX + bounds.width / 2;
-    const focusY = focusNode?.y ?? bounds.minY + bounds.height / 2;
-    const viewWidth = containerSize.width / INITIAL_SCALE;
-    const viewHeight = containerSize.height / INITIAL_SCALE;
+    const container = containerRef.current;
+    if (!container) return;
 
-    setCamera({
-      x: focusX - viewWidth / 2,
-      y: focusY - viewHeight / 2,
-      scale: INITIAL_SCALE,
-    });
-  }, [containerSize.width, containerSize.height, bounds, graph.nodes]);
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
+      zoomAtPoint(camera.scale * factor, e.clientX, e.clientY);
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+    return () => container.removeEventListener("wheel", handleWheel);
+  }, [camera.scale, zoomAtPoint]);
 
   // Pan handlers - 1:1 tracking with drag threshold so clicks still work
   const handleMouseDown = useCallback(
@@ -596,16 +644,6 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     setPanPending(false);
   }, []);
 
-  // Wheel zoom toward cursor
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
-      e.preventDefault();
-      const factor = e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
-      zoomAtPoint(camera.scale * factor, e.clientX, e.clientY);
-    },
-    [camera.scale, zoomAtPoint]
-  );
-
   const nodeMap = useMemo(
     () => new Map(graph.nodes.map((n) => [n.id, n])),
     [graph]
@@ -634,7 +672,6 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      onWheel={handleWheel}
       style={{ cursor: isPanning ? "grabbing" : panPending ? "grab" : "default" }}
     >
       <svg
