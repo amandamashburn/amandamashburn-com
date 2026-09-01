@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2, Maximize, Minimize } from "lucide-react";
 import {
   type Graph,
   type GraphNode,
@@ -197,12 +197,16 @@ function ZoomControls({
   onZoomIn,
   onZoomOut,
   onFitToView,
+  onToggleFullscreen,
   scale,
+  isFullscreen,
 }: {
   onZoomIn: () => void;
   onZoomOut: () => void;
   onFitToView: () => void;
+  onToggleFullscreen: () => void;
   scale: number;
+  isFullscreen: boolean;
 }) {
   return (
     <div className="absolute bottom-4 right-4 flex flex-col gap-1 bg-background/90 backdrop-blur-sm border border-foreground/20 rounded-lg p-1.5 shadow-sm">
@@ -230,6 +234,17 @@ function ZoomControls({
       >
         <Maximize2 size={18} className="text-foreground" />
       </button>
+      <button
+        onClick={onToggleFullscreen}
+        className="p-2 rounded-md hover:bg-foreground/10 transition-colors"
+        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+      >
+        {isFullscreen ? (
+          <Minimize size={18} className="text-foreground" />
+        ) : (
+          <Maximize size={18} className="text-foreground" />
+        )}
+      </button>
       <div className="text-center font-mono text-xs text-foreground/70 py-1 tabular-nums">
         {Math.round(scale * 100)}%
       </div>
@@ -242,6 +257,7 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
   const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Get graph bounds (memoized)
   const bounds = useMemo(() => getGraphBounds(graph), [graph]);
@@ -256,6 +272,54 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
   const [cameraStart, setCameraStart] = useState({ x: 0, y: 0 });
+
+  // Fullscreen handlers
+  const toggleFullscreen = useCallback(async () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        await container.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.warn("Fullscreen not supported:", err);
+    }
+  }, []);
+
+  // Listen for fullscreen changes (including Esc key exit)
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isNowFullscreen = !!document.fullscreenElement;
+      setIsFullscreen(isNowFullscreen);
+      
+      // Re-measure container after fullscreen change, then fit to view
+      setTimeout(() => {
+        const container = containerRef.current;
+        if (container) {
+          const rect = container.getBoundingClientRect();
+          setContainerSize({ width: rect.width, height: rect.height });
+        }
+      }, 50);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  // Esc key handler for fullscreen exit
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isFullscreen]);
 
   // Build contains tree once
   const childrenMap = useMemo(() => buildContainsTree(graph), [graph]);
@@ -482,10 +546,15 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   const viewHeight = containerSize.height / camera.scale;
   const viewBox = `${camera.x} ${camera.y} ${viewWidth} ${viewHeight}`;
 
+  // Container classes - fullscreen uses full viewport
+  const containerClasses = isFullscreen
+    ? "relative w-screen h-screen overflow-hidden bg-background"
+    : "relative w-full h-[700px] overflow-hidden bg-background border border-foreground/15 rounded-lg";
+
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[700px] overflow-hidden bg-background border border-foreground/15 rounded-lg"
+      className={containerClasses}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -549,7 +618,9 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}
         onFitToView={fitToView}
+        onToggleFullscreen={toggleFullscreen}
         scale={camera.scale}
+        isFullscreen={isFullscreen}
       />
 
       {/* Node count indicator */}
