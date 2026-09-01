@@ -28,11 +28,12 @@ function Legend() {
 
 function Instructions() {
   return (
-    <div className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] text-muted-foreground">
+    <div className="flex flex-wrap gap-x-5 gap-y-1.5 font-mono text-[10px] text-muted-foreground">
       <span>Scroll to zoom</span>
       <span>Drag to pan</span>
-      <span>Click chevron to expand/collapse</span>
+      <span>Click ▶ to expand/collapse</span>
       <span>Hover for connections</span>
+      <span>Fullscreen for immersion</span>
     </div>
   );
 }
