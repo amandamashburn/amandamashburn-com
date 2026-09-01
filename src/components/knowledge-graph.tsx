@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { ChevronRight, ChevronDown, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import {
   type Graph,
   type GraphNode,
@@ -28,13 +28,39 @@ interface Camera {
   scale: number;
 }
 
+// Plain SVG chevron paths (no nested svg elements)
+function ChevronRightIcon({ x, y, size }: { x: number; y: number; size: number }) {
+  return (
+    <path
+      d={`M ${x + size * 0.3} ${y + size * 0.2} L ${x + size * 0.7} ${y + size * 0.5} L ${x + size * 0.3} ${y + size * 0.8}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={size * 0.15}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  );
+}
+
+function ChevronDownIcon({ x, y, size }: { x: number; y: number; size: number }) {
+  return (
+    <path
+      d={`M ${x + size * 0.2} ${y + size * 0.3} L ${x + size * 0.5} ${y + size * 0.7} L ${x + size * 0.8} ${y + size * 0.3}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={size * 0.15}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  );
+}
+
 function GraphEdgeLine({
   fromNode,
   toNode,
   isHighlighted,
   isDimmed,
 }: {
-  edge: GraphEdge;
   fromNode: GraphNode;
   toNode: GraphNode;
   isHighlighted: boolean;
@@ -51,8 +77,6 @@ function GraphEdgeLine({
       stroke="currentColor"
       strokeWidth={isHighlighted ? 1.5 : 1}
       strokeOpacity={opacity}
-      className="text-foreground transition-opacity duration-150"
-      aria-hidden="true"
     />
   );
 }
@@ -77,11 +101,11 @@ function GraphNodeElement({
   onToggleCollapse: () => void;
 }) {
   const opacity = isDimmed ? 0.15 : 1;
+  const chevronSize = 12;
 
   return (
     <g
-      className="transition-opacity duration-150"
-      style={{ opacity }}
+      opacity={opacity}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       onFocus={onHover}
@@ -104,7 +128,7 @@ function GraphNodeElement({
               onToggleCollapse();
             }
           }}
-          className="cursor-pointer"
+          style={{ cursor: "pointer" }}
         >
           <rect
             x={node.x - 8}
@@ -114,21 +138,9 @@ function GraphNodeElement({
             fill="transparent"
           />
           {isCollapsed ? (
-            <ChevronRight
-              x={node.x - 6}
-              y={node.y - 6}
-              width={12}
-              height={12}
-              className="text-muted-foreground"
-            />
+            <ChevronRightIcon x={node.x - 6} y={node.y - 6} size={chevronSize} />
           ) : (
-            <ChevronDown
-              x={node.x - 6}
-              y={node.y - 6}
-              width={12}
-              height={12}
-              className="text-muted-foreground"
-            />
+            <ChevronDownIcon x={node.x - 6} y={node.y - 6} size={chevronSize} />
           )}
         </g>
       )}
@@ -139,15 +151,15 @@ function GraphNodeElement({
         cy={node.y}
         r={isHighlighted ? NODE_RADIUS + 1.5 : NODE_RADIUS}
         fill="currentColor"
-        className="text-foreground transition-all duration-150"
       />
 
       {/* Node label */}
       <text
         x={node.x + (hasChildren ? 12 : 10)}
-        y={node.y + 3}
-        className="fill-current text-foreground font-sans text-[10px] select-none"
-        style={{ pointerEvents: "none" }}
+        y={node.y + 4}
+        fontSize={10}
+        fontFamily="var(--font-ibm-plex-sans), sans-serif"
+        fill="currentColor"
       >
         {node.label}
       </text>
@@ -156,8 +168,11 @@ function GraphNodeElement({
       <text
         x={node.x + (hasChildren ? 12 : 10)}
         y={node.y - 8}
-        className="fill-current text-muted-foreground font-mono text-[8px] uppercase tracking-wider select-none"
-        style={{ pointerEvents: "none" }}
+        fontSize={8}
+        fontFamily="var(--font-ibm-plex-mono), monospace"
+        fill="currentColor"
+        opacity={0.5}
+        style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}
       >
         {node.type}
       </text>
@@ -213,12 +228,22 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
-  // Initialize camera to center on the graph bounds
-  const [camera, setCamera] = useState<Camera>(() => ({
-    x: 0,
-    y: 0,
-    scale: 0.15, // Start zoomed out to see more of the graph
-  }));
+  const [containerSize, setContainerSize] = useState({ width: 800, height: 600 });
+  
+  // Get graph bounds (memoized)
+  const bounds = useMemo(() => getGraphBounds(graph), [graph]);
+  
+  // Initialize camera to show the full graph bounds
+  const [camera, setCamera] = useState<Camera>(() => {
+    // Start with a view that shows all nodes
+    const padding = 100;
+    return {
+      x: bounds.minX - padding,
+      y: bounds.minY - padding,
+      scale: 0.08, // Start very zoomed out to guarantee nodes are visible
+    };
+  });
+  
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
@@ -248,8 +273,6 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
       (e) => visibleNodeIds.has(e.from) && visibleNodeIds.has(e.to)
     );
   }, [graph, visibleNodeIds]);
-
-  const bounds = useMemo(() => getGraphBounds(graph), [graph]);
 
   // Neighbor highlighting
   const neighborIds = useMemo(() => {
@@ -319,33 +342,56 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   }, []);
 
   const fitToView = useCallback(() => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const scaleX = rect.width / bounds.width;
-    const scaleY = rect.height / bounds.height;
-    const newScale = Math.min(scaleX, scaleY, 1) * 0.9;
+    const { width, height } = containerSize;
+    if (width === 0 || height === 0) return;
+    
+    const scaleX = width / bounds.width;
+    const scaleY = height / bounds.height;
+    const newScale = Math.min(scaleX, scaleY) * 0.85;
+    const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
 
     // Center the view on the graph bounds
-    const viewWidth = rect.width / newScale;
-    const viewHeight = rect.height / newScale;
+    const viewWidth = width / clampedScale;
+    const viewHeight = height / clampedScale;
     
     setCamera({
       x: bounds.minX + (bounds.width - viewWidth) / 2,
       y: bounds.minY + (bounds.height - viewHeight) / 2,
-      scale: Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale)),
+      scale: clampedScale,
     });
-  }, [bounds]);
+  }, [bounds, containerSize]);
 
-  // Initial fit to view
+  // Measure container and fit to view on mount
   useEffect(() => {
-    const timer = setTimeout(fitToView, 100);
-    return () => clearTimeout(timer);
-  }, [fitToView]);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const updateSize = () => {
+      const rect = container.getBoundingClientRect();
+      setContainerSize({ width: rect.width, height: rect.height });
+    };
+
+    // Initial measurement
+    updateSize();
+
+    // Use ResizeObserver for responsive updates
+    const resizeObserver = new ResizeObserver(updateSize);
+    resizeObserver.observe(container);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Fit to view when container size is known
+  useEffect(() => {
+    if (containerSize.width > 0 && containerSize.height > 0) {
+      fitToView();
+    }
+  }, [containerSize.width, containerSize.height, fitToView]);
 
   // Pan handlers
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (e.button !== 0) return; // Only left click
+      if (e.button !== 0) return;
       setIsPanning(true);
       setPanStart({ x: e.clientX, y: e.clientY });
     },
@@ -354,12 +400,15 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!isPanning || !containerRef.current) return;
-      // Convert screen pixels to world coordinates
-      const rect = containerRef.current.getBoundingClientRect();
-      const viewWidth = rect.width / camera.scale;
-      const dx = ((e.clientX - panStart.x) / rect.width) * viewWidth;
-      const dy = ((e.clientY - panStart.y) / rect.height) * (rect.height / camera.scale);
+      if (!isPanning) return;
+      const { width, height } = containerSize;
+      if (width === 0 || height === 0) return;
+      
+      const viewWidth = width / camera.scale;
+      const viewHeight = height / camera.scale;
+      const dx = ((e.clientX - panStart.x) / width) * viewWidth;
+      const dy = ((e.clientY - panStart.y) / height) * viewHeight;
+      
       setCamera((prev) => ({
         ...prev,
         x: prev.x - dx,
@@ -367,7 +416,7 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
       }));
       setPanStart({ x: e.clientX, y: e.clientY });
     },
-    [isPanning, panStart, camera.scale]
+    [isPanning, panStart, camera.scale, containerSize]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -397,11 +446,9 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     [graph, visibleNodeIds]
   );
 
-  // Calculate viewBox based on camera state
-  const containerWidth = containerRef.current?.clientWidth || 800;
-  const containerHeight = containerRef.current?.clientHeight || 600;
-  const viewWidth = containerWidth / camera.scale;
-  const viewHeight = containerHeight / camera.scale;
+  // Calculate viewBox from camera and container size
+  const viewWidth = containerSize.width / camera.scale;
+  const viewHeight = containerSize.height / camera.scale;
   const viewBox = `${camera.x} ${camera.y} ${viewWidth} ${viewHeight}`;
 
   return (
@@ -416,11 +463,13 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
       style={{ cursor: isPanning ? "grabbing" : "grab" }}
     >
       <svg
-        className="w-full h-full"
+        width="100%"
+        height="100%"
         viewBox={viewBox}
         preserveAspectRatio="xMidYMid meet"
         role="img"
         aria-label={`Knowledge graph: ${graph.title} with ${visibleNodes.length} visible nodes`}
+        style={{ color: "var(--foreground)" }}
       >
         <title>{graph.title}</title>
         <desc>
@@ -429,7 +478,7 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
         </desc>
 
         {/* Edges */}
-        <g className="edges">
+        <g>
           {visibleEdges.map((edge) => {
             const fromNode = nodeMap.get(edge.from);
             const toNode = nodeMap.get(edge.to);
@@ -438,7 +487,6 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
             return (
               <GraphEdgeLine
                 key={`${edge.from}-${edge.to}-${edge.kind}`}
-                edge={edge}
                 fromNode={fromNode}
                 toNode={toNode}
                 isHighlighted={isEdgeHighlighted(edge)}
@@ -449,7 +497,7 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
         </g>
 
         {/* Nodes */}
-        <g className="nodes">
+        <g>
           {visibleNodes.map((node) => (
             <GraphNodeElement
               key={node.id}
