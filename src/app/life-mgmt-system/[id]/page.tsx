@@ -138,20 +138,30 @@ export default async function NodeDetailPage({ params }: PageProps) {
           </div>
         </header>
 
-        <article className="space-y-5 font-serif text-base leading-relaxed">
-          {node.summary ? (
-            <p>{node.summary}</p>
-          ) : (
-            <p className="text-muted-foreground italic">
-              No summary available yet. Content coming soon.
-            </p>
+        <article className="space-y-5 font-serif text-base leading-relaxed text-foreground/90">
+          {node.summary && (
+            <p className="text-foreground font-medium">{node.summary}</p>
           )}
 
-          <p className="text-foreground/80">
-            This is a placeholder page for the{" "}
-            <span className="font-mono text-sm">{node.label}</span> node. More
-            detailed content will be added as the Life Management System
-            documentation expands.
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat.
+          </p>
+
+          <p>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+            cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.
+          </p>
+
+          <p>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+            accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
+            quae ab illo inventore veritatis et quasi architecto beatae vitae
+            dicta sunt explicabo.
           </p>
         </article>
 

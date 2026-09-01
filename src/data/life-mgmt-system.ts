@@ -8,7 +8,7 @@ export const lifeMgmtSystemGraph: Graph = {
   id: "life-mgmt-system",
   title: "Life Management System",
   nodes: [
-    { id: "notion", label: "Notion", type: "setup", x: 3140, y: 300 },
+    { id: "notion", label: "Notion", type: "setup", x: 3140, y: 300, href: "/life-mgmt-system/notion", summary: "The central hub for knowledge management, task tracking, and life documentation." },
     { id: "email", label: "Email", type: "system", x: 1940, y: 2860 },
     { id: "calendar", label: "Calendar", type: "system", x: 2480, y: 2320 },
     { id: "financial", label: "Financial", type: "system", x: 1100, y: 1700 },

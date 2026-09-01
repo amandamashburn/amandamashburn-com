@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { ZoomIn, ZoomOut, Maximize2, Maximize, Minimize } from "lucide-react";
 import {
   type Graph,
@@ -98,6 +99,7 @@ function GraphNodeElement({
   onHover,
   onLeave,
   onToggleCollapse,
+  onNavigate,
 }: {
   node: GraphNode;
   isHighlighted: boolean;
@@ -107,11 +109,29 @@ function GraphNodeElement({
   onHover: () => void;
   onLeave: () => void;
   onToggleCollapse: () => void;
+  onNavigate: () => void;
 }) {
   // Higher contrast: normal nodes solid, dimmed fainter but still visible
   const opacity = isDimmed ? 0.25 : 1;
   const chevronSize = 18;
   const radius = isHighlighted ? NODE_RADIUS_HOVER : NODE_RADIUS;
+  const hasHref = !!node.href;
+
+  const handleNodeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (hasHref) {
+      onNavigate();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (hasHref) {
+        onNavigate();
+      }
+    }
+  };
 
   return (
     <g
@@ -121,10 +141,12 @@ function GraphNodeElement({
       onFocus={onHover}
       onBlur={onLeave}
       tabIndex={0}
-      role="treeitem"
+      role={hasHref ? "link" : "treeitem"}
       aria-expanded={hasChildren ? !isCollapsed : undefined}
-      aria-label={`${node.label} (${node.type})${hasChildren ? (isCollapsed ? " - collapsed" : " - expanded") : ""}`}
-      style={{ cursor: "pointer" }}
+      aria-label={`${node.label} (${node.type})${hasHref ? " - click to view details" : ""}${hasChildren ? (isCollapsed ? " - collapsed" : " - expanded") : ""}`}
+      style={{ cursor: hasHref ? "pointer" : "default" }}
+      onClick={handleNodeClick}
+      onKeyDown={handleKeyDown}
     >
       {/* Click target for expand/collapse */}
       {hasChildren && (
@@ -136,6 +158,7 @@ function GraphNodeElement({
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
+              e.stopPropagation();
               onToggleCollapse();
             }
           }}
@@ -157,7 +180,7 @@ function GraphNodeElement({
         </g>
       )}
 
-      {/* Node circle - larger and more prominent */}
+      {/* Node circle - larger and more prominent, underline-style for links */}
       <circle
         cx={node.x}
         cy={node.y}
@@ -165,7 +188,7 @@ function GraphNodeElement({
         fill="currentColor"
       />
 
-      {/* Node label - larger, readable */}
+      {/* Node label - larger, readable, underlined if navigable */}
       <text
         x={node.x + (hasChildren ? 16 : 14)}
         y={node.y + 5}
@@ -173,6 +196,7 @@ function GraphNodeElement({
         fontFamily="var(--font-ibm-plex-sans), system-ui, sans-serif"
         fontWeight={isHighlighted ? 500 : 400}
         fill="currentColor"
+        textDecoration={hasHref ? "underline" : "none"}
       >
         {node.label}
       </text>
@@ -253,6 +277,7 @@ function ZoomControls({
 }
 
 export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
@@ -640,6 +665,7 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
               onHover={() => setHoveredNodeId(node.id)}
               onLeave={() => setHoveredNodeId(null)}
               onToggleCollapse={() => toggleCollapse(node.id)}
+              onNavigate={() => node.href && router.push(node.href)}
             />
           ))}
         </g>
