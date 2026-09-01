@@ -34,6 +34,7 @@ function Instructions() {
       <span>Click ▶ to expand/collapse</span>
       <span>Hover for connections</span>
       <span>Fullscreen for immersion</span>
+      <span>Click underlined nodes to read</span>
     </div>
   );
 }

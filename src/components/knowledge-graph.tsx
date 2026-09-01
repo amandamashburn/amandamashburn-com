@@ -28,6 +28,8 @@ const TYPE_FONT_SIZE = 10;
 const MIN_SCALE = 0.03;  // Can zoom way out to see full map
 const MAX_SCALE = 1.5;   // Can zoom in to read details
 const ZOOM_FACTOR = 1.15; // Smooth zoom steps
+const INITIAL_SCALE = 0.65; // Readable nodes/labels on load
+const PAN_THRESHOLD = 5; // Pixels before drag-pan starts (preserves clicks)
 
 interface Camera {
   x: number;
@@ -124,6 +126,13 @@ function GraphNodeElement({
     }
   };
 
+  const handleNodeMouseDown = (e: React.MouseEvent) => {
+    // Prevent container pan from stealing clicks on navigable nodes
+    if (hasHref) {
+      e.stopPropagation();
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -146,11 +155,13 @@ function GraphNodeElement({
       aria-label={`${node.label} (${node.type})${hasHref ? " - click to view details" : ""}${hasChildren ? (isCollapsed ? " - collapsed" : " - expanded") : ""}`}
       style={{ cursor: hasHref ? "pointer" : "default" }}
       onClick={handleNodeClick}
+      onMouseDown={handleNodeMouseDown}
       onKeyDown={handleKeyDown}
     >
       {/* Click target for expand/collapse */}
       {hasChildren && (
         <g
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             onToggleCollapse();
@@ -295,8 +306,9 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   }));
   
   const [isPanning, setIsPanning] = useState(false);
-  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
-  const [cameraStart, setCameraStart] = useState({ x: 0, y: 0 });
+  const [panPending, setPanPending] = useState(false);
+  const panStartRef = useRef({ x: 0, y: 0 });
+  const cameraStartRef = useRef({ x: 0, y: 0 });
 
   // Fullscreen handlers
   const toggleFullscreen = useCallback(async () => {
@@ -529,53 +541,59 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     
     initializedRef.current = true;
     
-    // Set an engaging initial zoom (~65%) centered on the graph
-    // At 65%, node radius (8px) becomes ~5px on screen, labels (~14px) become ~9px - readable
-    const initialScale = 0.65;
-    const viewWidth = containerSize.width / initialScale;
-    const viewHeight = containerSize.height / initialScale;
-    
-    // Center the view on the graph
-    const centerX = bounds.minX + bounds.width / 2;
-    const centerY = bounds.minY + bounds.height / 2;
-    
-    setCamera({
-      x: centerX - viewWidth / 2,
-      y: centerY - viewHeight / 2,
-      scale: initialScale,
-    });
-  }, [containerSize.width, containerSize.height, bounds]);
+    // Set an engaging initial zoom centered on the Notion hub (or graph center)
+    const focusNode = graph.nodes.find((n) => n.id === "notion");
+    const focusX = focusNode?.x ?? bounds.minX + bounds.width / 2;
+    const focusY = focusNode?.y ?? bounds.minY + bounds.height / 2;
+    const viewWidth = containerSize.width / INITIAL_SCALE;
+    const viewHeight = containerSize.height / INITIAL_SCALE;
 
-  // Pan handlers - 1:1 tracking
+    setCamera({
+      x: focusX - viewWidth / 2,
+      y: focusY - viewHeight / 2,
+      scale: INITIAL_SCALE,
+    });
+  }, [containerSize.width, containerSize.height, bounds, graph.nodes]);
+
+  // Pan handlers - 1:1 tracking with drag threshold so clicks still work
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (e.button !== 0) return;
-      setIsPanning(true);
-      setPanStart({ x: e.clientX, y: e.clientY });
-      setCameraStart({ x: camera.x, y: camera.y });
+      setPanPending(true);
+      panStartRef.current = { x: e.clientX, y: e.clientY };
+      cameraStartRef.current = { x: camera.x, y: camera.y };
     },
     [camera.x, camera.y]
   );
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      if (!isPanning) return;
-      
-      // Direct 1:1 pixel-to-world mapping
-      const dx = (e.clientX - panStart.x) / camera.scale;
-      const dy = (e.clientY - panStart.y) / camera.scale;
-      
+      if (!panPending && !isPanning) return;
+
+      const dx = e.clientX - panStartRef.current.x;
+      const dy = e.clientY - panStartRef.current.y;
+
+      if (!isPanning) {
+        if (Math.hypot(dx, dy) < PAN_THRESHOLD) return;
+        setIsPanning(true);
+        setPanPending(false);
+      }
+
+      const worldDx = dx / camera.scale;
+      const worldDy = dy / camera.scale;
+
       setCamera((prev) => ({
         ...prev,
-        x: cameraStart.x - dx,
-        y: cameraStart.y - dy,
+        x: cameraStartRef.current.x - worldDx,
+        y: cameraStartRef.current.y - worldDy,
       }));
     },
-    [isPanning, panStart, cameraStart, camera.scale]
+    [isPanning, panPending, camera.scale]
   );
 
   const handleMouseUp = useCallback(() => {
     setIsPanning(false);
+    setPanPending(false);
   }, []);
 
   // Wheel zoom toward cursor
@@ -617,7 +635,7 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
-      style={{ cursor: isPanning ? "grabbing" : "grab" }}
+      style={{ cursor: isPanning ? "grabbing" : panPending ? "grab" : "default" }}
     >
       <svg
         width="100%"
