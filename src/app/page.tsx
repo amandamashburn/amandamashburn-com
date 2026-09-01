@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="flex min-h-svh flex-col items-center px-6 py-16 sm:py-24 md:py-32">
@@ -42,6 +44,12 @@ export default function Home() {
         <section className="mt-10 sm:mt-12">
           <p className="font-serif text-base italic text-foreground">Tools.</p>
           <nav className="mt-5 flex flex-col items-start gap-3">
+            <Link
+              href="/life-mgmt-system"
+              className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
+            >
+              Life Management System
+            </Link>
             <a
               href="/calendar"
               className="inline-block rounded border border-foreground/10 bg-background px-3 py-1.5 font-mono text-xs font-light uppercase tracking-[0.03em] text-foreground transition-colors hover:border-foreground/30 sm:text-sm"
