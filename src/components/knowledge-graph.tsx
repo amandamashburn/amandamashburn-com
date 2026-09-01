@@ -289,13 +289,17 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     }
   }, []);
 
+  // Track pending fullscreen fit
+  const pendingFullscreenFitRef = useRef(false);
+
   // Listen for fullscreen changes (including Esc key exit)
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isNowFullscreen = !!document.fullscreenElement;
       setIsFullscreen(isNowFullscreen);
+      pendingFullscreenFitRef.current = true;
       
-      // Re-measure container after fullscreen change, then fit to view
+      // Re-measure container after fullscreen change
       setTimeout(() => {
         const container = containerRef.current;
         if (container) {
@@ -422,6 +426,14 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     });
   }, [bounds, containerSize]);
 
+  // Fit to view after fullscreen changes
+  useEffect(() => {
+    if (pendingFullscreenFitRef.current && containerSize.width > 0 && containerSize.height > 0) {
+      pendingFullscreenFitRef.current = false;
+      fitToView();
+    }
+  }, [containerSize.width, containerSize.height, fitToView]);
+
   // Zoom toward cursor position
   const zoomAtPoint = useCallback((newScale: number, clientX: number, clientY: number) => {
     const container = containerRef.current;
@@ -464,7 +476,10 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     zoomAtPoint(camera.scale / ZOOM_FACTOR, rect.left + rect.width / 2, rect.top + rect.height / 2);
   }, [camera.scale, zoomAtPoint]);
 
-  // Measure container and fit to view on mount
+  // Track whether initial view has been set
+  const initializedRef = useRef(false);
+
+  // Measure container on mount and resize
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -482,12 +497,28 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     return () => resizeObserver.disconnect();
   }, []);
 
-  // Fit to view when container size is known
+  // Set initial view once container is measured (don't auto-fit - show engaging zoom level)
   useEffect(() => {
-    if (containerSize.width > 0 && containerSize.height > 0) {
-      fitToView();
-    }
-  }, [containerSize.width, containerSize.height, fitToView]);
+    if (initializedRef.current) return;
+    if (containerSize.width === 0 || containerSize.height === 0) return;
+    
+    initializedRef.current = true;
+    
+    // Set an engaging initial zoom (~25%) centered on the graph
+    const initialScale = 0.25;
+    const viewWidth = containerSize.width / initialScale;
+    const viewHeight = containerSize.height / initialScale;
+    
+    // Center the view on the graph
+    const centerX = bounds.minX + bounds.width / 2;
+    const centerY = bounds.minY + bounds.height / 2;
+    
+    setCamera({
+      x: centerX - viewWidth / 2,
+      y: centerY - viewHeight / 2,
+      scale: initialScale,
+    });
+  }, [containerSize.width, containerSize.height, bounds]);
 
   // Pan handlers - 1:1 tracking
   const handleMouseDown = useCallback(
