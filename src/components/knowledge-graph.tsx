@@ -17,10 +17,16 @@ interface KnowledgeGraphProps {
   graph: Graph;
 }
 
-const NODE_RADIUS = 5;
-const MIN_SCALE = 0.1;
-const MAX_SCALE = 2;
-const ZOOM_STEP = 0.15;
+// Visual constants - sized for an explorable map feel
+const NODE_RADIUS = 8;
+const NODE_RADIUS_HOVER = 10;
+const EDGE_WIDTH = 1.5;
+const EDGE_WIDTH_HOVER = 2.5;
+const LABEL_FONT_SIZE = 14;
+const TYPE_FONT_SIZE = 10;
+const MIN_SCALE = 0.03;  // Can zoom way out to see full map
+const MAX_SCALE = 1.5;   // Can zoom in to read details
+const ZOOM_FACTOR = 1.15; // Smooth zoom steps
 
 interface Camera {
   x: number;
@@ -66,7 +72,9 @@ function GraphEdgeLine({
   isHighlighted: boolean;
   isDimmed: boolean;
 }) {
-  const opacity = isDimmed ? 0.08 : isHighlighted ? 0.8 : 0.25;
+  // Higher contrast: normal edges visible, dimmed still faint, highlighted bold
+  const opacity = isDimmed ? 0.12 : isHighlighted ? 1 : 0.5;
+  const width = isHighlighted ? EDGE_WIDTH_HOVER : EDGE_WIDTH;
 
   return (
     <line
@@ -75,7 +83,7 @@ function GraphEdgeLine({
       x2={toNode.x}
       y2={toNode.y}
       stroke="currentColor"
-      strokeWidth={isHighlighted ? 1.5 : 1}
+      strokeWidth={width}
       strokeOpacity={opacity}
     />
   );
@@ -100,8 +108,10 @@ function GraphNodeElement({
   onLeave: () => void;
   onToggleCollapse: () => void;
 }) {
-  const opacity = isDimmed ? 0.15 : 1;
-  const chevronSize = 12;
+  // Higher contrast: normal nodes solid, dimmed fainter but still visible
+  const opacity = isDimmed ? 0.25 : 1;
+  const chevronSize = 18;
+  const radius = isHighlighted ? NODE_RADIUS_HOVER : NODE_RADIUS;
 
   return (
     <g
@@ -114,6 +124,7 @@ function GraphNodeElement({
       role="treeitem"
       aria-expanded={hasChildren ? !isCollapsed : undefined}
       aria-label={`${node.label} (${node.type})${hasChildren ? (isCollapsed ? " - collapsed" : " - expanded") : ""}`}
+      style={{ cursor: "pointer" }}
     >
       {/* Click target for expand/collapse */}
       {hasChildren && (
@@ -128,51 +139,53 @@ function GraphNodeElement({
               onToggleCollapse();
             }
           }}
-          style={{ cursor: "pointer" }}
         >
           <rect
-            x={node.x - 8}
-            y={node.y - 8}
-            width={16}
-            height={16}
+            x={node.x - chevronSize / 2}
+            y={node.y - chevronSize / 2}
+            width={chevronSize}
+            height={chevronSize}
             fill="transparent"
           />
-          {isCollapsed ? (
-            <ChevronRightIcon x={node.x - 6} y={node.y - 6} size={chevronSize} />
-          ) : (
-            <ChevronDownIcon x={node.x - 6} y={node.y - 6} size={chevronSize} />
-          )}
+          <g opacity={0.7}>
+            {isCollapsed ? (
+              <ChevronRightIcon x={node.x - chevronSize / 2} y={node.y - chevronSize / 2} size={chevronSize} />
+            ) : (
+              <ChevronDownIcon x={node.x - chevronSize / 2} y={node.y - chevronSize / 2} size={chevronSize} />
+            )}
+          </g>
         </g>
       )}
 
-      {/* Node circle */}
+      {/* Node circle - larger and more prominent */}
       <circle
         cx={node.x}
         cy={node.y}
-        r={isHighlighted ? NODE_RADIUS + 1.5 : NODE_RADIUS}
+        r={radius}
         fill="currentColor"
       />
 
-      {/* Node label */}
+      {/* Node label - larger, readable */}
       <text
-        x={node.x + (hasChildren ? 12 : 10)}
-        y={node.y + 4}
-        fontSize={10}
-        fontFamily="var(--font-ibm-plex-sans), sans-serif"
+        x={node.x + (hasChildren ? 16 : 14)}
+        y={node.y + 5}
+        fontSize={LABEL_FONT_SIZE}
+        fontFamily="var(--font-ibm-plex-sans), system-ui, sans-serif"
+        fontWeight={isHighlighted ? 500 : 400}
         fill="currentColor"
       >
         {node.label}
       </text>
 
-      {/* Type label */}
+      {/* Type label - smaller but still legible */}
       <text
-        x={node.x + (hasChildren ? 12 : 10)}
-        y={node.y - 8}
-        fontSize={8}
+        x={node.x + (hasChildren ? 16 : 14)}
+        y={node.y - 12}
+        fontSize={TYPE_FONT_SIZE}
         fontFamily="var(--font-ibm-plex-mono), monospace"
         fill="currentColor"
-        opacity={0.5}
-        style={{ textTransform: "uppercase", letterSpacing: "0.05em" }}
+        opacity={0.6}
+        style={{ textTransform: "uppercase", letterSpacing: "0.08em" }}
       >
         {node.type}
       </text>
@@ -192,32 +205,32 @@ function ZoomControls({
   scale: number;
 }) {
   return (
-    <div className="absolute bottom-4 right-4 flex flex-col gap-1 bg-background/80 backdrop-blur-sm border border-foreground/10 rounded p-1">
+    <div className="absolute bottom-4 right-4 flex flex-col gap-1 bg-background/90 backdrop-blur-sm border border-foreground/20 rounded-lg p-1.5 shadow-sm">
       <button
         onClick={onZoomIn}
         disabled={scale >= MAX_SCALE}
-        className="p-1.5 rounded hover:bg-foreground/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="p-2 rounded-md hover:bg-foreground/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         aria-label="Zoom in"
       >
-        <ZoomIn size={16} className="text-foreground" />
+        <ZoomIn size={18} className="text-foreground" />
       </button>
       <button
         onClick={onZoomOut}
         disabled={scale <= MIN_SCALE}
-        className="p-1.5 rounded hover:bg-foreground/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="p-2 rounded-md hover:bg-foreground/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         aria-label="Zoom out"
       >
-        <ZoomOut size={16} className="text-foreground" />
+        <ZoomOut size={18} className="text-foreground" />
       </button>
-      <div className="h-px bg-foreground/10 my-0.5" />
+      <div className="h-px bg-foreground/15 my-1" />
       <button
         onClick={onFitToView}
-        className="p-1.5 rounded hover:bg-foreground/5 transition-colors"
+        className="p-2 rounded-md hover:bg-foreground/10 transition-colors"
         aria-label="Fit to view"
       >
-        <Maximize2 size={16} className="text-foreground" />
+        <Maximize2 size={18} className="text-foreground" />
       </button>
-      <div className="text-center font-mono text-[9px] text-muted-foreground py-1">
+      <div className="text-center font-mono text-xs text-foreground/70 py-1 tabular-nums">
         {Math.round(scale * 100)}%
       </div>
     </div>
@@ -233,19 +246,16 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   // Get graph bounds (memoized)
   const bounds = useMemo(() => getGraphBounds(graph), [graph]);
   
-  // Initialize camera to show the full graph bounds
-  const [camera, setCamera] = useState<Camera>(() => {
-    // Start with a view that shows all nodes
-    const padding = 100;
-    return {
-      x: bounds.minX - padding,
-      y: bounds.minY - padding,
-      scale: 0.08, // Start very zoomed out to guarantee nodes are visible
-    };
-  });
+  // Initialize camera to show the full graph
+  const [camera, setCamera] = useState<Camera>(() => ({
+    x: bounds.minX,
+    y: bounds.minY,
+    scale: 0.06,
+  }));
   
   const [isPanning, setIsPanning] = useState(false);
   const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [cameraStart, setCameraStart] = useState({ x: 0, y: 0 });
 
   // Build contains tree once
   const childrenMap = useMemo(() => buildContainsTree(graph), [graph]);
@@ -326,31 +336,18 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     });
   }, []);
 
-  // Zoom functions
-  const zoomIn = useCallback(() => {
-    setCamera((prev) => ({
-      ...prev,
-      scale: Math.min(MAX_SCALE, prev.scale + ZOOM_STEP),
-    }));
-  }, []);
-
-  const zoomOut = useCallback(() => {
-    setCamera((prev) => ({
-      ...prev,
-      scale: Math.max(MIN_SCALE, prev.scale - ZOOM_STEP),
-    }));
-  }, []);
-
+  // Fit to view - frames the entire graph
   const fitToView = useCallback(() => {
     const { width, height } = containerSize;
     if (width === 0 || height === 0) return;
     
+    // Calculate scale to fit graph with padding
     const scaleX = width / bounds.width;
     const scaleY = height / bounds.height;
     const newScale = Math.min(scaleX, scaleY) * 0.85;
     const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
 
-    // Center the view on the graph bounds
+    // Center the graph in the viewport
     const viewWidth = width / clampedScale;
     const viewHeight = height / clampedScale;
     
@@ -360,6 +357,48 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
       scale: clampedScale,
     });
   }, [bounds, containerSize]);
+
+  // Zoom toward cursor position
+  const zoomAtPoint = useCallback((newScale: number, clientX: number, clientY: number) => {
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const rect = container.getBoundingClientRect();
+    const clampedScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+    
+    // Get cursor position relative to container
+    const cursorX = clientX - rect.left;
+    const cursorY = clientY - rect.top;
+    
+    // Convert to world coordinates at current scale
+    const worldX = camera.x + (cursorX / camera.scale);
+    const worldY = camera.y + (cursorY / camera.scale);
+    
+    // Calculate new camera position to keep cursor point fixed
+    const newCameraX = worldX - (cursorX / clampedScale);
+    const newCameraY = worldY - (cursorY / clampedScale);
+    
+    setCamera({
+      x: newCameraX,
+      y: newCameraY,
+      scale: clampedScale,
+    });
+  }, [camera]);
+
+  // Zoom controls
+  const zoomIn = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    zoomAtPoint(camera.scale * ZOOM_FACTOR, rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }, [camera.scale, zoomAtPoint]);
+
+  const zoomOut = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    zoomAtPoint(camera.scale / ZOOM_FACTOR, rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }, [camera.scale, zoomAtPoint]);
 
   // Measure container and fit to view on mount
   useEffect(() => {
@@ -371,10 +410,8 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
       setContainerSize({ width: rect.width, height: rect.height });
     };
 
-    // Initial measurement
     updateSize();
 
-    // Use ResizeObserver for responsive updates
     const resizeObserver = new ResizeObserver(updateSize);
     resizeObserver.observe(container);
 
@@ -388,52 +425,46 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     }
   }, [containerSize.width, containerSize.height, fitToView]);
 
-  // Pan handlers
+  // Pan handlers - 1:1 tracking
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (e.button !== 0) return;
       setIsPanning(true);
       setPanStart({ x: e.clientX, y: e.clientY });
+      setCameraStart({ x: camera.x, y: camera.y });
     },
-    []
+    [camera.x, camera.y]
   );
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (!isPanning) return;
-      const { width, height } = containerSize;
-      if (width === 0 || height === 0) return;
       
-      const viewWidth = width / camera.scale;
-      const viewHeight = height / camera.scale;
-      const dx = ((e.clientX - panStart.x) / width) * viewWidth;
-      const dy = ((e.clientY - panStart.y) / height) * viewHeight;
+      // Direct 1:1 pixel-to-world mapping
+      const dx = (e.clientX - panStart.x) / camera.scale;
+      const dy = (e.clientY - panStart.y) / camera.scale;
       
       setCamera((prev) => ({
         ...prev,
-        x: prev.x - dx,
-        y: prev.y - dy,
+        x: cameraStart.x - dx,
+        y: cameraStart.y - dy,
       }));
-      setPanStart({ x: e.clientX, y: e.clientY });
     },
-    [isPanning, panStart, camera.scale, containerSize]
+    [isPanning, panStart, cameraStart, camera.scale]
   );
 
   const handleMouseUp = useCallback(() => {
     setIsPanning(false);
   }, []);
 
-  // Wheel zoom
+  // Wheel zoom toward cursor
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
       e.preventDefault();
-      const delta = e.deltaY > 0 ? -ZOOM_STEP : ZOOM_STEP;
-      setCamera((prev) => ({
-        ...prev,
-        scale: Math.max(MIN_SCALE, Math.min(MAX_SCALE, prev.scale + delta)),
-      }));
+      const factor = e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
+      zoomAtPoint(camera.scale * factor, e.clientX, e.clientY);
     },
-    []
+    [camera.scale, zoomAtPoint]
   );
 
   const nodeMap = useMemo(
@@ -454,7 +485,7 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[600px] overflow-hidden bg-background border border-foreground/10 rounded"
+      className="relative w-full h-[700px] overflow-hidden bg-background border border-foreground/15 rounded-lg"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -474,10 +505,10 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
         <title>{graph.title}</title>
         <desc>
           A knowledge graph showing {visibleNodes.length} of {graph.nodes.length} nodes.
-          Use scroll to zoom, drag to pan. Click chevrons to expand/collapse.
+          Scroll to zoom, drag to pan. Click nodes with chevrons to expand/collapse.
         </desc>
 
-        {/* Edges */}
+        {/* Edges - render first so they're behind nodes */}
         <g>
           {visibleEdges.map((edge) => {
             const fromNode = nodeMap.get(edge.from);
@@ -522,7 +553,7 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
       />
 
       {/* Node count indicator */}
-      <div className="absolute top-4 left-4 font-mono text-[10px] text-muted-foreground bg-background/80 backdrop-blur-sm px-2 py-1 rounded border border-foreground/10">
+      <div className="absolute top-4 left-4 font-mono text-xs text-foreground/70 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-foreground/15">
         {visibleNodes.length} / {graph.nodes.length} nodes
       </div>
     </div>
