@@ -529,8 +529,9 @@ export function KnowledgeGraph({ graph }: KnowledgeGraphProps) {
     
     initializedRef.current = true;
     
-    // Set an engaging initial zoom (~25%) centered on the graph
-    const initialScale = 0.25;
+    // Set an engaging initial zoom (~65%) centered on the graph
+    // At 65%, node radius (8px) becomes ~5px on screen, labels (~14px) become ~9px - readable
+    const initialScale = 0.65;
     const viewWidth = containerSize.width / initialScale;
     const viewHeight = containerSize.height / initialScale;
     
