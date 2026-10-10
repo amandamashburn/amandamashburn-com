@@ -1,6 +1,39 @@
+import {
+  CONTACT_EMAILS,
+  SAME_AS,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/site";
+
+const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+    },
+    {
+      "@type": "Person",
+      name: SITE_NAME,
+      url: SITE_URL,
+      description: SITE_DESCRIPTION,
+      email: [...CONTACT_EMAILS],
+      sameAs: [...SAME_AS],
+    },
+  ],
+};
+
 export default function Home() {
   return (
-    <main className="flex min-h-svh flex-col items-center px-6 py-16 sm:py-24 md:py-32">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
+      />
+      <main className="flex min-h-svh flex-col items-center px-6 py-16 sm:py-24 md:py-32">
       <div className="w-full max-w-[640px]">
         <header className="text-center">
           <h1 className="mb-8 font-serif text-xl font-normal uppercase tracking-[0.3em] sm:text-2xl">
@@ -71,5 +104,6 @@ export default function Home() {
         <hr className="mt-4 border-dotted border-foreground/15" />
       </div>
     </main>
+    </>
   );
 }

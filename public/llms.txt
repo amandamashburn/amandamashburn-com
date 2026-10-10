@@ -1,0 +1,13 @@
+# Amanda Mashburn
+
+> Personal website of Amanda Mashburn. Systems thinker, technical non-engineer, and Southerner.
+
+## Pages
+
+- [Home](https://www.amandamashburn.com/): Amanda Mashburn — Systems Thinker • Generalist. Tools: ISO 8601 Calendar. Follow: X, GitHub, Instagram. Contact: amandamashburn@hey.com, amandamashburn@mail.grokbot.com.
+- [ISO 8601 Calendar](https://www.amandamashburn.com/calendar): Year dashboard with an ISO 8601 week grid (current and next ISO week year), stats for today, day of year, ISO week, weeks and days remaining, and year progress. Dates use MM-DD format.
+
+## Optional
+
+- Canonical site URL: https://www.amandamashburn.com
+- Sitemap: https://www.amandamashburn.com/sitemap.xml
