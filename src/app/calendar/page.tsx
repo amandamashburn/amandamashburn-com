@@ -195,7 +195,7 @@ function DateCell({
   const state = isToday
     ? "bg-foreground text-background"
     : isAdjacent
-      ? "text-muted-foreground/50 italic"
+      ? "text-muted-foreground/50"
       : isPast
         ? "text-muted-foreground"
         : "";
