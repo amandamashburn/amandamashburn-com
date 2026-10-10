@@ -14,7 +14,7 @@ export default function Home() {
         </header>
 
         <section className="mt-10 sm:mt-12">
-          <p className="font-serif text-base italic text-foreground">Tools.</p>
+          <p className="font-serif text-base text-foreground">Tools.</p>
           <nav className="mt-5 flex flex-col items-start gap-3">
             <a
               href="/calendar"
@@ -26,7 +26,7 @@ export default function Home() {
         </section>
 
         <footer className="mt-10 sm:mt-12">
-          <p className="font-serif text-base italic text-foreground">Follow me.</p>
+          <p className="font-serif text-base text-foreground">Follow me.</p>
           <nav className="mt-5 flex flex-col items-start gap-3">
             <a
               href="https://x.com/AmandaMashburn"
@@ -55,7 +55,7 @@ export default function Home() {
           </nav>
         </footer>
         <section className="mt-10 sm:mt-12">
-          <p className="font-serif text-base italic text-foreground">Get in touch.</p>
+          <p className="font-serif text-base text-foreground">Get in touch.</p>
           <p className="mt-5 font-mono text-xs font-light tracking-[0.05em] text-foreground sm:text-sm">
             amandamashburn@hey.com
           </p>
@@ -66,7 +66,7 @@ export default function Home() {
 
         <hr className="mt-10 border-dotted border-foreground/15 sm:mt-12" />
         <p className="mt-4 text-center font-mono text-sm font-light text-muted-foreground">
-          LAST UPDATE: 2026-09-04
+          LAST UPDATE: 2026-10-09
         </p>
         <hr className="mt-4 border-dotted border-foreground/15" />
       </div>

@@ -9,21 +9,21 @@ const ibmPlexSans = IBM_Plex_Sans({
   variable: "--font-ibm-plex-sans",
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  style: ["normal"],
 });
 
 const ibmPlexSerif = IBM_Plex_Serif({
   variable: "--font-ibm-plex-serif",
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  style: ["normal"],
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  style: ["normal"],
 });
 
 export const metadata: Metadata = {
