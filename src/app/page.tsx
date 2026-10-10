@@ -59,6 +59,9 @@ export default function Home() {
           <p className="mt-5 font-mono text-xs font-light tracking-[0.05em] text-foreground sm:text-sm">
             amandamashburn@hey.com
           </p>
+          <p className="mt-5 font-mono text-xs font-light tracking-[0.05em] text-foreground sm:text-sm">
+            amandamashburn@mail.grokbot.com
+          </p>
         </section>
 
         <hr className="mt-10 border-dotted border-foreground/15 sm:mt-12" />
