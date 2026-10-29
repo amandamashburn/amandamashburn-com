@@ -1,5 +1,5 @@
-/** Canonical production origin (apex redirects here). */
-export const SITE_URL = "https://www.amandamashburn.com";
+/** Canonical production origin (www redirects here). */
+export const SITE_URL = "https://amandamashburn.com";
 
 export const SITE_NAME = "Amanda Mashburn";
 
